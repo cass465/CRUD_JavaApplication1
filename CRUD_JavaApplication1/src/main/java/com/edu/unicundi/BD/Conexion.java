@@ -15,7 +15,7 @@ import java.sql.SQLException;
  */
 public class Conexion {
     public static Connection getConection(){
-        String url = "jdbc:sqlserver//localhost:1433;" + "database=Autos;" + "user=sa;" + "password=XVV254;";
+        String url = "jdbc:sqlserver://HP-CASS465:1433;" + "database=Autos;" + "user=sa;" + "password=XVV254;";
         
         try {
             Connection con = DriverManager.getConnection(url);

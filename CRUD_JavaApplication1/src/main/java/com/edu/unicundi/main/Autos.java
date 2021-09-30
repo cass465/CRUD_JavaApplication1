@@ -72,14 +72,14 @@ public class Autos extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Marca", "Modelo", "Servicio"
+                "Id", "Marca", "Modelo", "Servicio"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -100,6 +100,7 @@ public class Autos extends javax.swing.JFrame {
             tblAutos.getColumnModel().getColumn(0).setResizable(false);
             tblAutos.getColumnModel().getColumn(1).setResizable(false);
             tblAutos.getColumnModel().getColumn(2).setResizable(false);
+            tblAutos.getColumnModel().getColumn(3).setResizable(false);
         }
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos"));
@@ -304,7 +305,7 @@ public class Autos extends javax.swing.JFrame {
             ResultSet rs;
         
             Connection con = Conexion.getConection();
-            ps = con.prepareStatement("SELECT * FROM autos WHERE id = ?");
+            ps = con.prepareStatement("SELECT * FROM auto WHERE id = ?");
             
             ps.setInt(1, id);
             rs = ps.executeQuery();
@@ -338,7 +339,7 @@ public class Autos extends javax.swing.JFrame {
         
         try {
             Connection con = Conexion.getConection();
-            PreparedStatement ps = con.prepareStatement("UPDATE auto SET (marca = ?, modelo = ?, servicio = ?) WHERE id = ?");
+            PreparedStatement ps = con.prepareStatement("UPDATE auto SET marca = ?, modelo = ?, servicio = ? WHERE id = ?");
             
             ps.setString(1, marca);
             ps.setString(2, modelo);
@@ -349,6 +350,7 @@ public class Autos extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Registro editado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
         } catch(SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println(ex.toString());
         }
         
         limpiar();
@@ -365,7 +367,7 @@ public class Autos extends javax.swing.JFrame {
             ps.setInt(1, id);
             
             ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro aliminado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Registro eliminado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
         } catch(SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -385,7 +387,7 @@ public class Autos extends javax.swing.JFrame {
         
         try {
             Connection con = Conexion.getConection();
-            ps = con.prepareStatement("SELECT * FROM autos");
+            ps = con.prepareStatement("SELECT * FROM auto");
             
             rs = ps.executeQuery();
             rsmd = rs.getMetaData();
