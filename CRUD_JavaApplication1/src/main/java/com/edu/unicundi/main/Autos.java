@@ -330,6 +330,11 @@ public class Autos extends javax.swing.JFrame {
     }//GEN-LAST:event_tblAutosMouseClicked
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        if (txtId.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Seleccione un elemento para modificar", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         String servicio = "";
 
         if (rbPublico.isSelected()) {
@@ -365,6 +370,10 @@ public class Autos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (txtId.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Seleccione un elemento para eliminar", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         int id = Integer.parseInt(txtId.getText());
 
         try {
@@ -414,6 +423,7 @@ public class Autos extends javax.swing.JFrame {
     }
 
     private void limpiar() {
+        txtId.setText("");
         txtMarca.setText("");
         txtModelo.setText("");
         btnGr.clearSelection();
