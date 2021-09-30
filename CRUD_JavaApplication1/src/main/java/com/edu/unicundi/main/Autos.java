@@ -6,6 +6,7 @@
 package com.edu.unicundi.main;
 
 import com.edu.unicundi.BD.Conexion;
+import com.edu.unicundi.clases.Auto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ import javax.swing.table.DefaultTableModel;
 public class Autos extends javax.swing.JFrame {
 
     ButtonGroup btnGr;
-    
+
     /**
      * Creates new form Autos
      */
@@ -263,30 +264,34 @@ public class Autos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        String marca = txtMarca.getText();
-        String modelo = txtModelo.getText();
+
         String servicio = "";
-        
+
         if (rbPublico.isSelected()) {
             servicio = "Público";
         } else if (rbParticular.isSelected()) {
             servicio = "Particular";
         }
-        
-        try {
-            Connection con = Conexion.getConection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO auto (marca, modelo, servicio) VALUES (?, ?, ?)");
-            
-            ps.setString(1, marca);
-            ps.setString(2, modelo);
-            ps.setString(3, servicio);
-            
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro guardado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
-        } catch(SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+
+        if (!txtMarca.getText().equals("") && !txtModelo.getText().equals("") && !servicio.equals("")) {
+            Auto auto = new Auto(txtMarca.getText(), txtModelo.getText(), servicio);
+            try {
+                Connection con = Conexion.getConection();
+                PreparedStatement ps = con.prepareStatement("INSERT INTO auto (marca, modelo, servicio) VALUES (?, ?, ?)");
+
+                ps.setString(1, auto.getMarca());
+                ps.setString(2, auto.getModelo());
+                ps.setString(3, auto.getServicio());
+
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Registro guardado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Complete todos los campos", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-        
+
         limpiar();
         listar();
     }//GEN-LAST:event_btnGuardarActionPerformed
@@ -299,79 +304,81 @@ public class Autos extends javax.swing.JFrame {
         try {
             int fila = tblAutos.getSelectedRow();
             int id = Integer.parseInt(tblAutos.getValueAt(fila, 0).toString());
-            
-            
+
             PreparedStatement ps;
             ResultSet rs;
-        
+
             Connection con = Conexion.getConection();
             ps = con.prepareStatement("SELECT * FROM auto WHERE id = ?");
-            
+
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 txtId.setText(String.valueOf(id));
                 txtMarca.setText(rs.getString("marca"));
                 txtModelo.setText(rs.getString("modelo"));
-                if(rs.getString("servicio").equals("Público")) {
+                if (rs.getString("servicio").equals("Público")) {
                     rbPublico.setSelected(true);
                 } else if (rs.getString("servicio").equals("Particular")) {
                     rbParticular.setSelected(true);
                 }
             }
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_tblAutosMouseClicked
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        int id = Integer.parseInt(txtId.getText());
-        String marca = txtMarca.getText();
-        String modelo = txtModelo.getText();
         String servicio = "";
-        
+
         if (rbPublico.isSelected()) {
             servicio = "Público";
         } else if (rbParticular.isSelected()) {
             servicio = "Particular";
         }
-        
-        try {
-            Connection con = Conexion.getConection();
-            PreparedStatement ps = con.prepareStatement("UPDATE auto SET marca = ?, modelo = ?, servicio = ? WHERE id = ?");
-            
-            ps.setString(1, marca);
-            ps.setString(2, modelo);
-            ps.setString(3, servicio);
-            ps.setInt(4, id);
-            
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro editado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
-        } catch(SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
-            System.out.println(ex.toString());
+
+        if (!txtMarca.getText().equals("") && !txtModelo.getText().equals("") && !servicio.equals("")) {
+            Auto auto = new Auto(Integer.parseInt(txtId.getText()), txtMarca.getText(), txtModelo.getText(), servicio);
+
+            try {
+                Connection con = Conexion.getConection();
+                PreparedStatement ps = con.prepareStatement("UPDATE auto SET marca = ?, modelo = ?, servicio = ? WHERE id = ?");
+
+                ps.setString(1, auto.getMarca());
+                ps.setString(2, auto.getModelo());
+                ps.setString(3, auto.getServicio());
+                ps.setInt(4, auto.getId());
+
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Registro editado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                System.out.println(ex.toString());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Complete todos los campos", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
-        
+
         limpiar();
         listar();
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         int id = Integer.parseInt(txtId.getText());
-        
+
         try {
             Connection con = Conexion.getConection();
             PreparedStatement ps = con.prepareStatement("DELETE FROM auto WHERE id = ?");
-            
+
             ps.setInt(1, id);
-            
+
             ps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Registro eliminado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         limpiar();
         listar();
     }//GEN-LAST:event_btnEliminarActionPerformed
@@ -379,39 +386,39 @@ public class Autos extends javax.swing.JFrame {
     private void listar() {
         DefaultTableModel modeloTabla = (DefaultTableModel) tblAutos.getModel();
         modeloTabla.setRowCount(0);
-        
+
         PreparedStatement ps;
         ResultSet rs;
         ResultSetMetaData rsmd;
         int columnas;
-        
+
         try {
             Connection con = Conexion.getConection();
             ps = con.prepareStatement("SELECT * FROM auto");
-            
+
             rs = ps.executeQuery();
             rsmd = rs.getMetaData();
             columnas = rsmd.getColumnCount();
-            
+
             while (rs.next()) {
                 Object[] fila = new Object[columnas];
-                for (int i=0; i<columnas; i++) {
-                    fila[i] = rs.getObject(i+1);
+                for (int i = 0; i < columnas; i++) {
+                    fila[i] = rs.getObject(i + 1);
                 }
-                
+
                 modeloTabla.addRow(fila);
             }
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void limpiar() {
         txtMarca.setText("");
         txtModelo.setText("");
         btnGr.clearSelection();
     }
-    
+
     /**
      * @param args the command line arguments
      */
