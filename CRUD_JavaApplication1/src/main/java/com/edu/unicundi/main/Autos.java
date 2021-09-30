@@ -140,6 +140,11 @@ public class Autos extends javax.swing.JFrame {
         });
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnLimpiar.setText("Limpiar");
         btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
@@ -349,6 +354,25 @@ public class Autos extends javax.swing.JFrame {
         limpiar();
         listar();
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int id = Integer.parseInt(txtId.getText());
+        
+        try {
+            Connection con = Conexion.getConection();
+            PreparedStatement ps = con.prepareStatement("DELETE FROM auto WHERE id = ?");
+            
+            ps.setInt(1, id);
+            
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro aliminado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
+        } catch(SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        limpiar();
+        listar();
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void listar() {
         DefaultTableModel modeloTabla = (DefaultTableModel) tblAutos.getModel();
