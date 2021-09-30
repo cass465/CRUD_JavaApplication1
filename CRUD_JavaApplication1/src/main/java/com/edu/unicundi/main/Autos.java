@@ -8,8 +8,12 @@ package com.edu.unicundi.main;
 import com.edu.unicundi.BD.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -17,11 +21,18 @@ import javax.swing.JOptionPane;
  */
 public class Autos extends javax.swing.JFrame {
 
+    ButtonGroup btnGr;
+    
     /**
      * Creates new form Autos
      */
     public Autos() {
         initComponents();
+        txtId.setVisible(false);
+        btnGr = new ButtonGroup();
+        btnGr.add(rbPublico);
+        btnGr.add(rbParticular);
+        listar();
     }
 
     /**
@@ -121,6 +132,11 @@ public class Autos extends javax.swing.JFrame {
         btnEliminar.setText("Eliminar");
 
         btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         txtId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -250,12 +266,55 @@ public class Autos extends javax.swing.JFrame {
             ps.setString(3, servicio);
             
             ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro guardado");
+            JOptionPane.showMessageDialog(null, "Registro guardado", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
         } catch(SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex.toString());
+            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        limpiar();
+        listar();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        limpiar();
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void listar() {
+        DefaultTableModel modeloTabla = (DefaultTableModel) tblAutos.getModel();
+        modeloTabla.setRowCount(0);
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        ResultSetMetaData rsmd;
+        int columnas;
+        
+        try {
+            Connection con = Conexion.getConection();
+            ps = con.prepareStatement("SELECT * FROM autos");
+            
+            rs = ps.executeQuery();
+            rsmd = rs.getMetaData();
+            columnas = rsmd.getColumnCount();
+            
+            while (rs.next()) {
+                Object[] fila = new Object[columnas];
+                for (int i=0; i<columnas; i++) {
+                    fila[i] = rs.getObject(i+1);
+                }
+                
+                modeloTabla.addRow(fila);
+            }
+        } catch(SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void limpiar() {
+        txtMarca.setText("");
+        txtModelo.setText("");
+        btnGr.clearSelection();
+    }
+    
     /**
      * @param args the command line arguments
      */
