@@ -90,6 +90,11 @@ public class Autos extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tblAutos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblAutosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblAutos);
         if (tblAutos.getColumnModel().getColumnCount() > 0) {
             tblAutos.getColumnModel().getColumn(0).setResizable(false);
@@ -278,6 +283,36 @@ public class Autos extends javax.swing.JFrame {
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         limpiar();
     }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void tblAutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblAutosMouseClicked
+        try {
+            int fila = tblAutos.getSelectedRow();
+            int id = Integer.parseInt(tblAutos.getValueAt(fila, 0).toString());
+            
+            
+            PreparedStatement ps;
+            ResultSet rs;
+        
+            Connection con = Conexion.getConection();
+            ps = con.prepareStatement("SELECT * FROM autos WHERE id = ?");
+            
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                txtId.setText(String.valueOf(id));
+                txtMarca.setText(rs.getString("marca"));
+                txtModelo.setText(rs.getString("modelo"));
+                if(rs.getString("servicio").equals("Público")) {
+                    rbPublico.setSelected(true);
+                } else if (rs.getString("servicio").equals("Particular")) {
+                    rbParticular.setSelected(true);
+                }
+            }
+        } catch(SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_tblAutosMouseClicked
 
     private void listar() {
         DefaultTableModel modeloTabla = (DefaultTableModel) tblAutos.getModel();
