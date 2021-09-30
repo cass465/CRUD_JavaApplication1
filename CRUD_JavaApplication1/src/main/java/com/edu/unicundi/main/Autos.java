@@ -133,6 +133,11 @@ public class Autos extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
 
@@ -271,7 +276,7 @@ public class Autos extends javax.swing.JFrame {
             ps.setString(3, servicio);
             
             ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro guardado", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Registro guardado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
         } catch(SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -313,6 +318,37 @@ public class Autos extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_tblAutosMouseClicked
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        int id = Integer.parseInt(txtId.getText());
+        String marca = txtMarca.getText();
+        String modelo = txtModelo.getText();
+        String servicio = "";
+        
+        if (rbPublico.isSelected()) {
+            servicio = "Público";
+        } else if (rbParticular.isSelected()) {
+            servicio = "Particular";
+        }
+        
+        try {
+            Connection con = Conexion.getConection();
+            PreparedStatement ps = con.prepareStatement("UPDATE auto SET (marca = ?, modelo = ?, servicio = ?) WHERE id = ?");
+            
+            ps.setString(1, marca);
+            ps.setString(2, modelo);
+            ps.setString(3, servicio);
+            ps.setInt(4, id);
+            
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro editado correctamente", "Mensaje Del Sistema", JOptionPane.INFORMATION_MESSAGE);
+        } catch(SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.toString(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        limpiar();
+        listar();
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     private void listar() {
         DefaultTableModel modeloTabla = (DefaultTableModel) tblAutos.getModel();
